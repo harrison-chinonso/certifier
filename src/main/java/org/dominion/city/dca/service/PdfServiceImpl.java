@@ -7,9 +7,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.dominion.city.dca.exceptions.BadRequestException;
 import org.dominion.city.dca.model.CertificateHolder;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +27,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -48,12 +50,16 @@ public class PdfServiceImpl implements PdfService {
     public ResponseEntity<?> generateBulkCertificate(List<CertificateHolder> holders){
         return exportPdf(holders);
     }
-
+//th:src="${logo}"
     private String parseThymeleafTemplate(CertificateHolder detail) {
+        String logo = convertToBase64("src/main/resources/images/logo.png");
+        String sign = convertToBase64("src/main/resources/images/sign.png");
         Map<String, Object> emailParams = Map.of(
             "name", detail.getFullName().toUpperCase(),
             "date", detail.getGraduationDate(),
-            "ref", detail.getRef()
+            "ref", detail.getRef(),
+            "logo", logo,
+            "sign", sign
         );
 
         Context context = new Context();
@@ -148,7 +154,21 @@ log.info("DONE");
                 "</body>\n" +
                 "</html>";
     }
+    private String convertToBase64(String filePath) {
+        Path path = Paths.get(filePath);
+        byte[] imageAsBytes = new byte[0];
+        try {
+            Resource resource = new UrlResource(path.toUri());
+            InputStream inputStream = resource.getInputStream();
+            imageAsBytes = IOUtils.toByteArray(inputStream);
 
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("\n File read Exception");
+        }
+
+        return Base64.getEncoder().encodeToString(imageAsBytes);
+    }
 
 //    public void generatePdfFromHtml(String html) throws IOException, DocumentException {
 //        String outputFolder = "certificate.pdf";

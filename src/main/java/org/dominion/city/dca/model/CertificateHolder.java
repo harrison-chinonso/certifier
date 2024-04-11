@@ -17,10 +17,6 @@ public class CertificateHolder {
     public String ref;
     public String graduationDate;
 
-    public String getGraduationDate() {
-        return graduationDate;
-    }
-
     public void setGraduationDate(String graduationDate) {
         LocalDate dates = LocalDate.of(Integer.parseInt(graduationDate.split("-")[0]),Integer.parseInt(graduationDate.split("-")[1]), 3);
         this.graduationDate = dates.getMonth().name()+" "+dates.getYear();
