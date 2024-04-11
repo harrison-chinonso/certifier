@@ -56,8 +56,8 @@ public class PdfController {
             CertificateHolder holder = CertificateHolder.builder()
                     .fullName(fullName)
                     .ref(ref)
-                    .graduationDate(date)
                     .build();
+            holder.setGraduationDate(date);
             return pdfService.generateCertificate(holder);
         }catch(Exception e){
             return ResponseEntity

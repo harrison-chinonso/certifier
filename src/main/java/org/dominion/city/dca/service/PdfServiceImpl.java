@@ -50,16 +50,18 @@ public class PdfServiceImpl implements PdfService {
     public ResponseEntity<?> generateBulkCertificate(List<CertificateHolder> holders){
         return exportPdf(holders);
     }
-//th:src="${logo}"
+
     private String parseThymeleafTemplate(CertificateHolder detail) {
         String logo = convertToBase64("src/main/resources/images/logo.png");
         String sign = convertToBase64("src/main/resources/images/sign.png");
+        String stamp = convertToBase64("src/main/resources/images/stamp.png");
         Map<String, Object> emailParams = Map.of(
             "name", detail.getFullName().toUpperCase(),
             "date", detail.getGraduationDate(),
             "ref", detail.getRef(),
             "logo", logo,
-            "sign", sign
+            "sign", sign,
+            "stamp", stamp
         );
 
         Context context = new Context();
@@ -169,41 +171,4 @@ log.info("DONE");
 
         return Base64.getEncoder().encodeToString(imageAsBytes);
     }
-
-//    public void generatePdfFromHtml(String html) throws IOException, DocumentException {
-//        String outputFolder = "certificate.pdf";
-//        FileOutputStream fileOutputStream = new FileOutputStream(outputFolder);
-//        ITextRenderer renderer = new ITextRenderer();
-//        renderer.setDocumentFromString(html);
-//        renderer.layout();
-//        renderer.createPDF(fileOutputStream, false);
-//        renderer.finishPDF();
-//    }
-//
-//    @SneakyThrows
-//    public void convertHtmlToPdf2() {
-//        String processedHtml = parseThymeleafTemplate("");
-//        FileOutputStream os = null;
-//        String fileNameUrl = "";
-//        try {
-//            final File outputFile = File.createTempFile("Student_01"+"_", ".pdf");
-//
-//            os = new FileOutputStream(outputFile);
-//            ITextRenderer itr = new ITextRenderer();
-//
-//            itr.setDocumentFromString(processedHtml);
-//            itr.layout();
-//            itr.createPDF(os, false);
-//            itr.finishPDF();
-//            fileNameUrl = outputFile.getName();
-//        } finally {
-//            if (os != null) {
-//                try {os.close();} catch (IOException ignored) { }
-//            }
-//        }
-//
-//        log.info("fileNameUrl {}", fileNameUrl);
-//
-//    }
-
 }
