@@ -9,7 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.dominion.city.dca.exceptions.BadRequestException;
+import org.dominion.city.dca.model.Certificate;
 import org.dominion.city.dca.model.CertificateHolder;
+import org.dominion.city.dca.model.User;
+import org.dominion.city.dca.repository.CertificateRepository;
+import org.dominion.city.dca.repository.UserRepository;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -37,31 +41,56 @@ import java.util.zip.ZipOutputStream;
 @Slf4j
 @RequiredArgsConstructor
 public class PdfServiceImpl implements PdfService {
-
+    private final UserRepository userRepository;
+    private final CertificateRepository certificateRepository;
     private final TemplateEngine templateEngine;
     @SneakyThrows
     @Override
     public ResponseEntity<?> generateCertificate(CertificateHolder holder){
-        return exportPdf(List.of(holder));
+        Optional<User> user = userRepository.findByUsername("admin@dca.com");
+        ResponseEntity<?> res = exportPdf(List.of(holder), user.get());
+        saveCertificate(user.get(), List.of(holder));
+        return res;
     }
 
     @SneakyThrows
     @Override
     public ResponseEntity<?> generateBulkCertificate(List<CertificateHolder> holders){
-        return exportPdf(holders);
+        Optional<User> user = userRepository.findByUsername("admin@dca.com");
+        ResponseEntity<?> res = exportPdf(holders, user.get());
+        saveCertificate(user.get(), holders);
+        return res;
     }
 
-    private String parseThymeleafTemplate(CertificateHolder detail) {
+    @SneakyThrows
+    @Override
+    public ResponseEntity<?> getCertificate(String ref){
+        Optional<User> user = userRepository.findByUsername("admin@dca.com");
+        Optional<Certificate> certificate = certificateRepository.findByRef(ref);
+
+        CertificateHolder holder = CertificateHolder.builder()
+                .fullName(certificate.get().getFullName())
+                .ref(certificate.get().getRef())
+                .graduationDate(certificate.get().getGraduationDate())
+                .build();
+
+        return exportPdf(List.of(holder), user.get());
+    }
+
+    private String parseThymeleafTemplate(CertificateHolder detail, User user) {
+
         String logo = convertToBase64("src/main/resources/images/logo.png");
-        String sign = convertToBase64("src/main/resources/images/sign.png");
         String stamp = convertToBase64("src/main/resources/images/stamp.png");
+
         Map<String, Object> emailParams = Map.of(
             "name", detail.getFullName().toUpperCase(),
             "date", detail.getGraduationDate(),
             "ref", detail.getRef(),
             "logo", logo,
-            "sign", sign,
-            "stamp", stamp
+            "pasSign", user.getPastorSign(),
+            "priSign", user.getPrincipalSign(),
+            "stamp", stamp,
+            "chapter", user.getChapter().toUpperCase()
         );
 
         Context context = new Context();
@@ -69,9 +98,20 @@ public class PdfServiceImpl implements PdfService {
 
         return templateEngine.process("pdf", context);
     }
+    public void saveCertificate(User user, List<CertificateHolder> details){
+        for(CertificateHolder detail : details) {
+            Certificate certificate = Certificate.builder()
+                    .chapter(user.getChapter().toUpperCase())
+                    .ref(detail.getRef())
+                    .fullName(detail.getFullName().toUpperCase())
+                    .graduationDate(detail.getGraduationDate())
+                    .build();
+            certificateRepository.save(certificate);
+        }
+    }
     @SneakyThrows
-    public ByteArrayOutputStream convertHtmlToPdf(CertificateHolder holder) {
-        String processedHtml = parseThymeleafTemplate(holder);
+    public ByteArrayOutputStream convertHtmlToPdf(CertificateHolder holder, User user) {
+        String processedHtml = parseThymeleafTemplate(holder, user);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ITextRenderer renderer = new ITextRenderer();
         renderer.setDocumentFromString(processedHtml);
@@ -80,16 +120,16 @@ public class PdfServiceImpl implements PdfService {
         renderer.finishPDF();
         return outputStream;
     }
-    public List<byte[]> generateMultiplePdfFiles(List<CertificateHolder> details){
+    public List<byte[]> generateMultiplePdfFiles(List<CertificateHolder> details, User user){
         List<byte[]> result = new ArrayList<>();
         for(CertificateHolder detail : details){
-           result.add(convertHtmlToPdf(detail).toByteArray());
+           result.add(convertHtmlToPdf(detail, user).toByteArray());
         }
         return result;
     }
-    public ResponseEntity<?> exportPdf(List<CertificateHolder> details) throws IOException {
+    public ResponseEntity<?> exportPdf(List<CertificateHolder> details, User user) throws IOException {
         // Generate multiple PDF files (replace this with your logic)
-        List<byte[]> pdfBytesList = generateMultiplePdfFiles(details);
+        List<byte[]> pdfBytesList = generateMultiplePdfFiles(details, user);
 
         // Create a ZIP file containing the PDF files
         ByteArrayOutputStream zipOutputStream = new ByteArrayOutputStream();
@@ -111,7 +151,7 @@ public class PdfServiceImpl implements PdfService {
         headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=DCA-Certificates.zip");
         headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
         headers.setContentLength(zipBytes.length);
-log.info("DONE");
+
         return ResponseEntity.ok()
                 .headers(headers)
                 .contentLength(zipBytes.length)
@@ -156,7 +196,7 @@ log.info("DONE");
                 "</body>\n" +
                 "</html>";
     }
-    private String convertToBase64(String filePath) {
+    public String convertToBase64(String filePath) {
         Path path = Paths.get(filePath);
         byte[] imageAsBytes = new byte[0];
         try {

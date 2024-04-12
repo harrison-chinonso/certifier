@@ -30,20 +30,20 @@
         <p><span th:text="${date}"></span></p>
     </div>
     <table style="padding-top: 10px; width: 100%">
-        <td>
+        <td style="width: 35%; margin-right: 0">
             <div style="text-align: center; margin-bottom: 0">
-                <img th:src="${sign} == null ? _ : @{'data:image/png;base64,'+${sign}}" style="width: 50px; height: 50px"></img>
+                <img th:src="${pasSign} == null ? _ : @{'data:image/png;base64,'+${pasSign}}" style="width: 50px; height: 50px;"></img>
                 <hr style="background-color: cornflowerblue; height: 3px; padding: 0; margin: 0"/>
             </div>
-            <h2 style="text-align: center;margin-top: 0">CHAPTER PASTOR</h2>
+            <h2 style="text-align: center;margin-top: 0"><span th:text="${chapter}"></span> CHAPTER PASTOR</h2>
         </td>
-        <td style="text-align: center;vertical-align: top">
-            <img th:src="${stamp} == null ? _ : @{'data:image/png;base64,'+${stamp}}" style="width: 100px; height: 100px"></img>
+        <td style="text-align: center; vertical-align: top; width: 30%">
+            <img th:src="${stamp} == null ? _ : @{'data:image/png;base64,'+${stamp}}" style="width: 100%; height: 100px"></img>
         </td>
-        <td style="text-align: right;vertical-align: top">
+        <td style="text-align: right;vertical-align: top; width: 35%; margin-left: 0">
             <div style="text-align: center; margin-bottom: 0">
                 <span>
-                <img th:src="${sign} == null ? _ : @{'data:image/png;base64,'+${sign}}"  style="width: 50px; height: 50px"></img></span>
+                <img th:src="${priSign} == null ? _ : @{'data:image/png;base64,'+${priSign}}"  style="width: 50px; height: 50px"></img></span>
                 <hr style="background-color: cornflowerblue; height: 3px; padding: 0; margin: 0"/>
             </div>
             <h2 style="text-align: center; margin-top: 0">DCA PRINCIPAL</h2>

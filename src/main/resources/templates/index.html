@@ -5,13 +5,22 @@
 </head>
 <body>
 <div class="container">
-    <h1 style="text-align: center">CERTIFICATE ISSUER</h1>
+    <table style="padding-top: 0; width: 100%">
+        <td style="text-align: right; width: 23%">
+            <img src="https://www.pngkey.com/png/detail/980-9806245_dominion-city.png" alt="Dominion City@pngkey.com" style="width: 120px; height: 100px"></img>
+        </td>
+        <td style="text-align: left; vertical-align: middle; width: 77%">
+            <span style="font-family: 'Arial Black'; font-size: 50px; color: #00369A;" >DOMINION CITY ACADEMY</span>
+        </td>
+    </table>
+    <hr style="background-color: cornflowerblue; height: 4px; padding: 0; margin: 0"/>
+    <h3 style="text-align: center">CERTIFICATE ISSUER</h3>
     <div class="row">
         <div class="col-md-8">
             <form method="POST" enctype="multipart/form-data" action="/getCertificate">
                 <div class="form-group">
-                    <label for="ref">CERTIFICATE REFERENCE</label>
-                    <input type="text" class="form-control" id="ref" aria-describedby="refHelp" placeholder="Enter Certificate Reference">
+                    <label for="ref" class="text-center">DOWNLOAD CERTIFICATE</label>
+                    <input type="text" class="form-control" id="ref" name="ref" aria-describedby="refHelp" placeholder="Enter Certificate Reference">
                     <small id="refHelp" class="form-text text-muted">Provide Certificate Reference to download certificate.</small>
                 </div>
                 <div style="text-align: right">
@@ -19,19 +28,23 @@
                 </div>
             </form>
         </div>
-        <div class="col-md-4 border bold">
-            <form method="POST" enctype="multipart/form-data" action="/login">
-                <label for="email">Login to Generate Certificate</label>
-                <div class="form-group mt-1">
-                    <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header text-center">LOGIN TO GENERATE CERTIFICATE</div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data" action="/login">
+                        <div class="form-group mt-1">
+                            <input type="email" class="form-control" id="email" name="username" aria-describedby="emailHelp" placeholder="Enter email">
+                        </div>
+                        <div class="form-group mt-1">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                        </div>
+                        <div style="text-align: right">
+                            <button type="submit" class="btn btn-secondary mt-2" >LOGIN</button>
+                        </div>
+                    </form>
                 </div>
-                <div class="form-group mt-1">
-                    <input type="password" class="form-control" id="password" placeholder="Password">
-                </div>
-                <div style="text-align: right">
-                    <button type="submit" class="btn btn-secondary mt-2" >LOGIN</button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>

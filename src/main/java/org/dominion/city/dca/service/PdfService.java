@@ -12,4 +12,7 @@ public interface PdfService {
 
     @SneakyThrows
     ResponseEntity<?> generateCertificate(CertificateHolder holder);
+
+    @SneakyThrows
+    ResponseEntity<?> getCertificate(String ref);
 }

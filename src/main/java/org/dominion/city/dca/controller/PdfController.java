@@ -5,7 +5,10 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.lang3.StringUtils;
 import org.dominion.city.dca.model.CertificateHolder;
+import org.dominion.city.dca.model.User;
+import org.dominion.city.dca.repository.UserRepository;
 import org.dominion.city.dca.service.PdfService;
 import org.dominion.city.dca.service.PdfServiceImpl;
 import org.springframework.http.HttpHeaders;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -25,14 +29,30 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Controller
 @RequiredArgsConstructor
 public class PdfController {
 
+    private final UserRepository userRepository;
     private final PdfService pdfService;
     private final PdfServiceImpl service;
+
+    @PostConstruct
+    public void PdfController(){
+        if(!userRepository.existsByUsername("admin@dca.com")) {
+            String sign = service.convertToBase64("src/main/resources/images/sign.png");
+            userRepository.save(User.builder()
+                    .chapter("Okota")
+                    .username("admin@dca.com")
+                    .password("90YTWGT82763TYWG@77736")
+                    .pastorSign(sign)
+                    .principalSign(sign)
+                    .build());
+        }
+    }
 
     @GetMapping("/")
     public String index() {
@@ -40,20 +60,31 @@ public class PdfController {
     }
 
     @PostMapping("/getCertificate")
-    public String getCertificate(String ref) {
-        log.info("REF {}", ref);
-        return null;
+    public ResponseEntity<?> getCertificate(String ref) {
+        try {
+            return pdfService.getCertificate(ref);
+        }catch(Exception e){
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(service.sendMessage(e.getLocalizedMessage()));
+        }
     }
 
     @PostMapping("/login")
     public String login(String username, String password) {
-        log.info("user {}, pass {}", username, password);
+        Optional<User> user =  userRepository.findByUsername(username);
+        if(!user.isPresent()){
+            return service.sendMessage(username + " does not exist");
+        }
+
+        if(!StringUtils.equals(user.get().getPassword(), password)){
+            return service.sendMessage("invalid credentials");
+        }
         return "generateOption";
     }
 
     @PostMapping("/exportOption")
     public String exportOption(String contentSelected) {
-        log.info("contentSelected {}", contentSelected);
         if(contentSelected.equalsIgnoreCase("bulk")){
             return "bulkExport";
         }else {
