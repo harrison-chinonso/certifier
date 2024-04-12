@@ -6,30 +6,34 @@
 <body>
 <div class="container">
     <h1 style="text-align: center">CERTIFICATE ISSUER</h1>
-    <form method="POST" enctype="multipart/form-data" action="/exportOption">
-        <fieldset class="form-group">
-            <div class="row p-3">
-                <legend class="col-form-label col-sm-6 pt-0">SELECT OPTION FOR CERTIFICATE GENERATION</legend>
-                <div class="col-sm-6">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="contentSelected" id="contentSelected1" value="single" >
-                        <label class="form-check-label" for="contentSelected1">
-                            SINGLE CERTIFICATION
-                        </label>
-                    </div>
-                    <div class="form-check pt-2">
-                        <input class="form-check-input" type="radio" name="contentSelected" id="contentSelected2" value="bulk">
-                        <label class="form-check-label" for="contentSelected2">
-                            BULK CERTIFICATION
-                        </label>
-                    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <form method="POST" enctype="multipart/form-data" action="/getCertificate">
+                <div class="form-group">
+                    <label for="ref">CERTIFICATE REFERENCE</label>
+                    <input type="text" class="form-control" id="ref" aria-describedby="refHelp" placeholder="Enter Certificate Reference">
+                    <small id="refHelp" class="form-text text-muted">Provide Certificate Reference to download certificate.</small>
                 </div>
-            </div>
-        </fieldset>
-        <div class="m-3">
-            <button type="submit" class="btn btn-primary">SELECT</button>
+                <div style="text-align: right">
+                    <button type="submit" class="btn btn-primary mt-2" >SEARCH</button>
+                </div>
+            </form>
         </div>
-    </form>
+        <div class="col-md-4 border bold">
+            <form method="POST" enctype="multipart/form-data" action="/login">
+                <label for="email">Login to Generate Certificate</label>
+                <div class="form-group mt-1">
+                    <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email">
+                </div>
+                <div class="form-group mt-1">
+                    <input type="password" class="form-control" id="password" placeholder="Password">
+                </div>
+                <div style="text-align: right">
+                    <button type="submit" class="btn btn-secondary mt-2" >LOGIN</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 </body>
 </html>
