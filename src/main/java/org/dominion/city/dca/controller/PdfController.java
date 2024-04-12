@@ -39,6 +39,18 @@ public class PdfController {
         return "index";
     }
 
+    @PostMapping("/getCertificate")
+    public String getCertificate(String ref) {
+        log.info("REF {}", ref);
+        return null;
+    }
+
+    @PostMapping("/login")
+    public String login(String username, String password) {
+        log.info("user {}, pass {}", username, password);
+        return "generateOption";
+    }
+
     @PostMapping("/exportOption")
     public String exportOption(String contentSelected) {
         log.info("contentSelected {}", contentSelected);
