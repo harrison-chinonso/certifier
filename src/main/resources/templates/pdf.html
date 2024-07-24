@@ -17,7 +17,7 @@
         </td>
      </table>
     <hr style="background-color: cornflowerblue; height: 4px; padding: 0; margin: 0"/>
-    <div style="text-align: center; width: 100%; padding-top: 20px">
+    <div style="text-align: center; width: 100%; padding-top: 25px">
         <h1> Certificate of Completion</h1>
         <p>This document certifies that</p>
         <div style="background-color: cornflowerblue; height: 50px">
@@ -25,8 +25,8 @@
         </div>
         <p>Has completed the following Levels of our training courses :</p>
         <h3>DCA Basic</h3>
-        <h3>DCA Maturity</h3>
-        <p>with student registration number no - <span th:text="${ref}"></span></p>
+        <h3>DCA Advanced</h3>
+        <p> in <span th:text="${chapter}"></span> Chapter with Registration number - <span th:text="${ref}"></span> and Graduating Grade - <span th:text="${grade}"></span>%</p>
         <p><span th:text="${date}"></span></p>
     </div>
     <table style="padding-top: 10px; width: 100%">
@@ -35,7 +35,7 @@
                 <img th:src="${pasSign} == null ? _ : @{'data:image/png;base64,'+${pasSign}}" style="width: 50px; height: 50px;"></img>
                 <hr style="background-color: cornflowerblue; height: 3px; padding: 0; margin: 0"/>
             </div>
-            <h2 style="text-align: center;margin-top: 0"><span th:text="${chapter}"></span> CHAPTER PASTOR</h2>
+            <h2 style="text-align: center;margin-top: 0">CHAPTER PASTOR</h2>
         </td>
         <td style="text-align: center; vertical-align: top; width: 30%">
             <img th:src="${stamp} == null ? _ : @{'data:image/png;base64,'+${stamp}}" style="width: 100%; height: 100px"></img>
@@ -49,7 +49,7 @@
             <h2 style="text-align: center; margin-top: 0">DCA PRINCIPAL</h2>
         </td>
     </table>
-    <div style="text-align: center; padding-top: 15px; font-weight: bold "><p1 >....Raising leaders that transform society</p1></div>
+    <div style="text-align: center; padding-top: 10px; font-weight: bold "><p1 >....Raising leaders that transform society</p1></div>
 </div>
 </body>
 </html>

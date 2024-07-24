@@ -17,6 +17,7 @@ public class CertificateHolder {
     public String fullName;
     public String ref;
     public String graduationDate;
+    public String graduationGrade;
 
     public String getGraduationDate() {
         return graduationDate;

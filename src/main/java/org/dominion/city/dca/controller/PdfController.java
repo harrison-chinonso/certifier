@@ -94,11 +94,12 @@ public class PdfController {
 
     @SneakyThrows
     @PostMapping("/generateCertificate")
-    public ResponseEntity<?> generatePdfFile(String fullName, String ref, String date) {
+    public ResponseEntity<?> generatePdfFile(String fullName, String ref, String date, String grade) {
         try {
             CertificateHolder holder = CertificateHolder.builder()
                     .fullName(fullName)
                     .ref(ref)
+                    .graduationGrade(grade)
                     .build();
             holder.setGraduationDate(date);
             return pdfService.generateCertificate(holder);

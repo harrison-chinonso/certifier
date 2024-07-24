@@ -81,13 +81,14 @@ public class PdfServiceImpl implements PdfService {
 
         String logo = convertToBase64("src/main/resources/images/logo.png");
         String stamp = convertToBase64("src/main/resources/images/stamp.png");
-
+//user.getPastorSign()
         Map<String, Object> emailParams = Map.of(
             "name", detail.getFullName().toUpperCase(),
             "date", detail.getGraduationDate(),
             "ref", detail.getRef(),
+            "grade", detail.getGraduationGrade(),
             "logo", logo,
-            "pasSign", user.getPastorSign(),
+            "pasSign", "",
             "priSign", user.getPrincipalSign(),
             "stamp", stamp,
             "chapter", user.getChapter().toUpperCase()
